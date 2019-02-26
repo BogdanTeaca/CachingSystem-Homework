@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 /**
  * Class that implements the logic of a doubly linked list node.
  *
- * @author TEACA BOGDAN, 325CD
+ * @author TEACA BOGDAN
  */
 public class Node<K, V> {
     public Pair<K, V> pair;
