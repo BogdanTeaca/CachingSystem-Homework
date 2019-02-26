@@ -6,7 +6,7 @@ import cachingSystem.classes.LRUCache;
  * Class that implements a Doubly Linked List. The operations also updates the
  * hash map entries of the cache.
  *
- * @author TEACA BOGDAN, 325CD
+ * @author TEACA BOGDAN
  */
 public class GenericDoublyLinkedList<K, V> {
     private LRUCache<K, V> lruCache;
