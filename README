@@ -1,0 +1,98 @@
+================================================================================
+
+	TEACA BOGDAN
+	Grupa 325CD
+
+================================================================================
+
+	1. Implementare Observable FIFO Cache
+
+Pentru implementarea de FIFO Cache cu Observer Pattern, am creat o relatie de
+compunere intre ObservableFIFOCache si FIFOCache si am utilizat operatiile
+din FIFOCache pentru a gestiona datele din cache.
+
+In metoda get() am verificat daca cheia se gaseste deja in cache. Daca nu se
+gaseste, anunt BroadcastListener-ul ca s-a intamplat un "Cache Miss". Acesta
+anunta la randul lui pe ceilalti listeneri care actualizeaza statisticile despre
+hits, misses si updates. Daca cheia se gaseste in cache, anunt BroadcastListener
+despre "Cache Hit".
+
+In metoda put() anunt BroadcastListener-ul despre "Cache Update" si apelez
+clearStaleEntries() care verifica pe baza Stale Policy-ului tipului de cache
+daca trebuie sters ultimul entry din cache. Ce inseamna "ultimul entry din
+cache" depinde de asemenea de tipul de cache. Acest lucru este asigurat de
+Strategy Pattern.
+
+Pentru celelalte metode din ObservableFIFOCache (size(), isEmpty(), remove(),
+clearAll() si getEldestEntry()), am apelat metoda asociata fiecareia din
+FIFOCache avand in vedere relatia de compunere dintre ObservableFIFOCache si
+FIFOCache.
+
+================================================================================
+
+
+	2. Implementare Least Recently Used Cache
+
+Pentru Least Recently Used (LRU) cache am implementat o lista dublu inlantuita
+asa cum era recomandat in enuntul temei. Am implementat lista ca o lista generica.
+Implementarea listei dublu inlantuite se afla in clasa "GenericDoublyLinkedList"
+din pachetul "dataStructures". Operatiile din lista dublu inlantuita updateaza
+atat nodurile din lista, cat si entry-urile din hash map-ul cache-ului.
+
+Astfel, folosind atat un hash map, cat si o lista dublu inlantuita garantam
+complexitatea O(1) pentru operatiile de get, put si remove din cache-ul LRU.
+
+Metodele din LRUCache sunt implementate asemanator cu cele de la Observable
+FIFO Cache, dar in loc sa ma folosesc de FIFOCache, ma folosesc de lista dublu
+inlantuita implementata si hash map.
+
+================================================================================
+
+	3. Implementare Time Aware Cache
+
+Pentru Time Aware Cache, am adaugat un camp de tipul Timestamp pentru nodurile
+din lista dublu inlantuita. La fiecare actualizare a unei chei dintr-un cache
+de tipul Time Aware, acest Timestamp va fi actualizat cu timpul curent in
+milisecunde folosind "System.currentTimeMillis()".
+
+Pentru Expire Policy, am suprascris metoda "shouldRemoveEldestEntry()" astfel
+incat decizia sa nu se mai ia pe baza capacitatii cache-ului, ci pe baza
+intervalului de timp de la ultima actualizare a cheii pana la timpul curent.
+
+================================================================================
+
+	4. Implementare Listeners
+
+Pentru BroadcastListener, am creat un LinkedList in care sa adaug listenerii
+cache-ului. La fiecare eveniment de tipul "Cache Hit", "Cache Miss" sau
+"Cache Update", cache-ul anunta acest BroadcastListener folosind metodele
+respective (onHit(), onMiss() si onPut()). Aceste metode itereaza prin
+lista de listeneri si apeleaza metodele onHit(), onMiss() si onPut() ale
+fiecarui listener, informandu-i despre evenimentele din cache. Astfel, fiecare
+listener isi poate face propriile statistici in legatura cu cache-ul.
+
+Pentru StatsListener, am creat 3 contoare "nrHits", "nrMisses" si "nrUpdates" pe
+care le-am initializat la 0, iar la fiecare eveniment de tipul "Cache Hit",
+"Cache Miss" si "Cache Update" se incrementeaza contorul corespunzator.
+
+Pentru KeyStatsListener, am creat 3 hash map-uri "cacheHits", "cacheMisses" si
+"cacheUpdates", ale caror entry-uri se comporta ca niste contoare ce retin
+numarul de hit-uri, miss-uri si update-uri pentru fiecare cheie din cache.
+Pentru returnarea listelor a top N chei cu cel mai mare numar de hits, misses
+sau updates, am sortat hash map-ul corespunzator cu ajutorul comparatorului
+"EntryComparator" pe care l-am implementat ca o clasa interna (deoarece il
+folosesc numai in clasa "KeyStatsListener" si nu are rost sa creez un fisier
+separat pentru el).
+
+Apoi, folosind metoda auxiliara "createTopList()" (pentru a evita duplicarea de
+cod), am creat lista ceruta ce contine top N chei.
+
+================================================================================
+
+	5. Java Doc-uri
+
+Deoarece Java Doc-urile deja scrise din scheletul de cod al temei contine
+comentarii in limba engleza, am pastrat conventia si am scris Java Doc-urile si
+comentariile pentru rezolvarea temei tot in limba engleza.
+
+================================================================================
